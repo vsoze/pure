@@ -138,7 +138,7 @@ prompt_pure_preprompt_render() {
 	fi
 	# Git pull/push arrows.
 	if [[ -n $prompt_pure_git_arrows ]]; then
-		preprompt_parts+=('%F{$prompt_pure_colors[git:arrow]}${prompt_pure_git_arrows}%f')
+		preprompt_parts+=('${prompt_pure_git_arrows}')
 	fi
 
 	# Username and machine, if applicable.
@@ -395,11 +395,11 @@ prompt_pure_check_git_arrows() {
 	setopt localoptions noshwordsplit
 	local arrows left=${1:-0} right=${2:-0}
 
-	(( right > 0 )) && arrows+=${PURE_GIT_DOWN_ARROW:-⇣}
-	(( left > 0 )) && arrows+=${PURE_GIT_UP_ARROW:-⇡}
+	(( right > 0 )) && arrows+=%F{$prompt_pure_colors[git:right]}"${PURE_GIT_DOWN_ARROW:-⇣}${right}"%f
+	(( left > 0 )) && arrows+=\ %F{$prompt_pure_colors[git:left]}"${PURE_GIT_UP_ARROW:-⇡}${left}"%f
 
 	[[ -n $arrows ]] || return
-	typeset -g REPLY=$arrows
+	typeset -g REPLY=${arrows# }
 }
 
 prompt_pure_async_callback() {
@@ -669,7 +669,8 @@ prompt_pure_setup() {
 	typeset -gA prompt_pure_colors_default prompt_pure_colors
 	prompt_pure_colors_default=(
 		execution_time       yellow
-		git:arrow            cyan
+		git:right            208
+		git:left             cyan
 		git:branch           242
 		git:branch:cached    red
 		host                 242
